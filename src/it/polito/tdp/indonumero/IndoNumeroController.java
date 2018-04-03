@@ -59,6 +59,10 @@ public class IndoNumeroController {
     	boxGioco.setDisable(false);
     	txtCurrent.setText(String.format("%d",this.tentativi));
     	txtMax.setText(String.format("%d",this.TMAX));
+    	txtLog.clear();
+    	txtTentativo.clear();
+    	
+    	txtLog.setText(String.format("Indovina un numero tra %d e %d.\n",1,NMAX));
     	
     }
 
@@ -66,6 +70,7 @@ public class IndoNumeroController {
     void handleProva(ActionEvent event) {
     	
     	String numS = txtTentativo.getText();
+    	
     	
     	if(numS.length()==0) {//verifico che abbia messo un numero
     		txtLog.appendText("Devi inserire un numero\n");
@@ -75,6 +80,46 @@ public class IndoNumeroController {
     	try {
     	int num= Integer.parseInt(numS);
     		//numero era effettivamente intero
+    	
+    	if(num<1||num>NMAX) {
+    		txtLog.appendText("Valore fuori dall'intervallo consentito!\n");
+    		return;
+    	}
+    	if(num==this.segreto) {
+    		//ha indovinato
+    		txtLog.appendText("Hai vinto!\n");
+    		
+    		//chiudere la partita
+    		btnNuova.setDisable(false);
+    		boxGioco.setDisable(true);
+    		this.inGame = false;
+    		
+    	}
+    	else {
+    		//tentativo fallito
+    		this.tentativi++;
+    		txtCurrent.setText(String.format("%d",this.tentativi));
+    		
+    		if(this.tentativi==this.TMAX){
+    			//ha perso
+    			txtCurrent.setText(String.format("Hai perso!Il numero era: %d\n",this.segreto));
+    			//chiudere la partita
+        		btnNuova.setDisable(false);
+        		boxGioco.setDisable(true);
+        		this.inGame = false;
+    		}
+    		else {
+    			//sono ancora in gioco
+    			if(num<segreto) {
+    				//troppo basso
+    				txtLog.appendText("Troppo basso!\n");
+    			}
+    			if(num>segreto) {
+    				//troppo alto
+    				txtLog.appendText("Troppo alto!\n");
+    			}
+    		}
+    	}
     	}catch(NumberFormatException ex){
     		txtLog.appendText("Il dado inserito è numerico\n");
     		return;
